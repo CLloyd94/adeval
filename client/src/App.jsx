@@ -71,7 +71,7 @@ export default function App() {
           id="api-key"
           className="api-key-input"
           type="password"
-          placeholder="sk-ant-..."
+          placeholder="Paste your Anthropic API key"
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
           spellCheck={false}
