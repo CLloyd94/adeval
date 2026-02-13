@@ -1,7 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-let client;
-
 const PROMPT = `You are an expert ad creative analyst. Evaluate this advertisement image across 6 performance-predictive dimensions.
 
 For each dimension, provide a score from 0-100 and a brief assessment (1-2 sentences):
@@ -35,8 +33,13 @@ const VALID_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
 export async function evaluate(req, res) {
   try {
-    if (!client) client = new Anthropic();
-    const { image, mediaType } = req.body;
+    const { image, mediaType, apiKey } = req.body;
+
+    if (!apiKey || typeof apiKey !== 'string') {
+      return res.status(400).json({ error: 'Missing API key' });
+    }
+
+    const client = new Anthropic({ apiKey });
 
     if (!image || typeof image !== 'string') {
       return res.status(400).json({ error: 'Missing or invalid "image" (base64 string)' });

@@ -4,6 +4,7 @@ import ImagePreview from './components/ImagePreview';
 import ResultsPanel from './components/ResultsPanel';
 
 export default function App() {
+  const [apiKey, setApiKey] = useState('');
   const [image, setImage] = useState(null);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,7 @@ export default function App() {
       const res = await fetch('/api/evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: image.base64, mediaType: image.mediaType }),
+        body: JSON.stringify({ image: image.base64, mediaType: image.mediaType, apiKey }),
       });
       const data = await res.json();
       if (!res.ok || data.error) {
@@ -63,6 +64,28 @@ export default function App() {
         </div>
         <p>AI-powered ad creative analysis across 6 performance dimensions</p>
       </header>
+
+      <div className="api-key-bar">
+        <label className="api-key-label" htmlFor="api-key">API Key</label>
+        <input
+          id="api-key"
+          className="api-key-input"
+          type="password"
+          placeholder="sk-ant-..."
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          spellCheck={false}
+          autoComplete="off"
+        />
+        <a
+          className="api-key-link"
+          href="https://console.anthropic.com/settings/keys"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Get a key
+        </a>
+      </div>
 
       {!image ? (
         <UploadZone onImageSelect={handleImageSelect} />
