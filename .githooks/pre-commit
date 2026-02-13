@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Pre-commit hook: block commits containing secrets
+
+STAGED=$(git diff --cached --name-only | grep -v '\.githooks/')
+if [ -z "$STAGED" ]; then
+  exit 0
+fi
+
+# Match actual Anthropic keys (sk-ant- followed by 20+ chars)
+if echo "$STAGED" | xargs -I{} git diff --cached -- {} | grep -qE 'sk-ant-[a-zA-Z0-9_-]{20,}'; then
+  echo "ERROR: Anthropic API key detected in staged changes."
+  echo "Remove the key and try again. Use --no-verify to bypass."
+  exit 1
+fi
+
+# Match ANTHROPIC_API_KEY set to anything that looks like a real key
+if echo "$STAGED" | xargs -I{} git diff --cached -- {} | grep -qE 'ANTHROPIC_API_KEY=sk-'; then
+  echo "ERROR: Anthropic API key detected in staged changes."
+  echo "Remove the key and try again. Use --no-verify to bypass."
+  exit 1
+fi
